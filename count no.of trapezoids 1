@@ -1,0 +1,26 @@
+class Solution:
+    def countTrapezoids(self, points: List[List[int]]) -> int:
+        MOD = 10**9 + 7
+        
+        # Count points sharing same y-coordinate
+        from collections import Counter
+        y_count = Counter(y for _, y in points)
+        
+        # Compute number of horizontal pairs C(k,2) for each y-level
+        horiz_pairs = []
+        for k in y_count.values():
+            if k >= 2:
+                horiz_pairs.append((k * (k - 1) // 2) % MOD)
+
+        # If less than 2 y-levels have >= 2 points, zero trapezoids
+        if len(horiz_pairs) < 2:
+            return 0
+        
+        # Sum_{i<j} (pairs[i] * pairs[j])
+        prefix_sum = 0
+        result = 0
+        for val in horiz_pairs:
+            result = (result + prefix_sum * val) % MOD
+            prefix_sum = (prefix_sum + val) % MOD
+
+        return result % MOD
