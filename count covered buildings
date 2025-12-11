@@ -1,0 +1,21 @@
+from typing import List
+class Solution:
+    def countCoveredBuildings(self, n: int, buildings: List[List[int]]) -> int:
+        INF = n + 1
+        min_row = [INF] * (n + 1)
+        max_row = [0] * (n + 1)
+        min_col = [INF] * (n + 1)
+        max_col = [0] * (n + 1)
+        for x, y in buildings:
+            min_row[x] = min(min_row[x], y)
+            max_row[x] = max(max_row[x], y)
+            min_col[y] = min(min_col[y], x)
+            max_col[y] = max(max_col[y], x)
+        ans = 0
+        for x, y in buildings:
+            if y == min_row[x] or y == max_row[x]:
+                continue
+            if x == min_col[y] or x == max_col[y]:
+                continue
+            ans += 1
+        return ans
