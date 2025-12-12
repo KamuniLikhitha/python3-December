@@ -1,0 +1,34 @@
+class Solution:
+    def countMentions(self, numberOfUsers: int, events: List[List[str]]) -> List[int]:
+        mentions = [0] * numberOfUsers
+        offline_until = [0] * numberOfUsers
+        events.sort(key=lambda x: int(x[1])) 
+        i = 0
+        n = len(events)
+        while i < n:
+            ts = int(events[i][1])
+            same_ts = []
+            while i < n and int(events[i][1]) == ts:
+                same_ts.append(events[i])
+                i += 1
+            for typ, _, data in same_ts:
+                if typ == "OFFLINE":
+                    uid = int(data)
+                    offline_until[uid] = ts + 60
+            for typ, _, data in same_ts:
+                if typ != "MESSAGE":
+                    continue
+                if data == "ALL":
+                    for u in range(numberOfUsers):
+                        mentions[u] += 1
+                    continue
+                if data == "HERE":
+                    for u in range(numberOfUsers):
+                        if ts >= offline_until[u]:
+                            mentions[u] += 1
+                    continue
+                for tok in data.split():
+                    if tok.startswith("id"):
+                        u = int(tok[2:])
+                        mentions[u] += 1
+        return mentions
