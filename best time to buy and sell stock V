@@ -1,0 +1,14 @@
+from typing import List
+class Solution:
+    def maximumProfit(self, prices: List[int], k: int) -> int:
+        n = len(prices)
+        INF = 10**30
+        dp0 = [0] + [-INF] * k         
+        dpl = [-INF] * (k + 1)       
+        dps = [-INF] * (k + 1)        
+        for price in prices:
+            for t in range(k, 0, -1):
+                dp0[t] = max(dp0[t], dpl[t] + price, dps[t] - price)
+                dpl[t] = max(dpl[t], dp0[t - 1] - price)
+                dps[t] = max(dps[t], dp0[t - 1] + price)   
+        return max(dp0)  
