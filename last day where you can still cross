@@ -1,0 +1,36 @@
+from collections import deque
+class Solution:
+    def latestDayToCross(self, row: int, col: int, cells: list[list[int]]) -> int:
+        def canCross(day):
+            grid = [[0] * col for _ in range(row)]
+            for i in range(day):
+                r, c = cells[i]
+                grid[r - 1][c - 1] = 1  
+            q = deque()
+            visited = [[False] * col for _ in range(row)]
+            for c in range(col):
+                if grid[0][c] == 0:
+                    q.append((0, c))
+                    visited[0][c] = True
+            directions = [(1,0), (-1,0), (0,1), (0,-1)]
+            while q:
+                r, c = q.popleft()
+                if r == row - 1:
+                    return True
+                for dr, dc in directions:
+                    nr, nc = r + dr, c + dc
+                    if 0 <= nr < row and 0 <= nc < col:
+                        if not visited[nr][nc] and grid[nr][nc] == 0:
+                            visited[nr][nc] = True
+                            q.append((nr, nc))
+            return False
+        lo, hi = 0, row * col
+        ans = 0
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            if canCross(mid):
+                ans = mid
+                lo = mid + 1
+            else:
+                hi = mid - 1
+        return ans
